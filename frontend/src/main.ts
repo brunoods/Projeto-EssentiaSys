@@ -2,6 +2,7 @@ import './style.css';
 import { getToken, login, logout } from './auth';
 import { renderMateriasPrimasPage } from './pages/materiasPrimas';
 import { renderProdutosPage } from './pages/produtos';
+// Futuramente, importaremos as outras páginas aqui
 
 const rootElement = document.getElementById('root');
 
@@ -14,7 +15,12 @@ function renderLayout(contentElement: HTMLElement) {
                 <ul>
                     <li><a href="#/materias-primas">Matérias-Primas</a></li>
                     <li><a href="#/produtos">Produtos</a></li>
-                    </ul>
+                    <li><a href="#/fornecedores">Fornecedores</a></li>
+                    <li><a href="#/clientes">Clientes</a></li>
+                    <li><a href="#/compras">Compras</a></li>
+                    <li><a href="#/vendas">Vendas</a></li>
+                    <li><a href="#/despesas">Despesas</a></li>
+                </ul>
                 <button id="logout-button">Logout</button>
             </nav>
             <main id="app-content"></main>
@@ -67,25 +73,24 @@ async function router() {
     const contentElement = document.createElement('div');
     renderLayout(contentElement);
     
-    // Define a página padrão se o URL for vazio ou inválido
     const path = window.location.hash || '#/materias-primas';
 
-    if (path === '#/materias-primas') {
-        await renderMateriasPrimasPage(contentElement);
-    } else if (path === '#/produtos') {
-        await renderProdutosPage(contentElement);
-    } else {
-        // Se a rota não for encontrada, redireciona para a página padrão
-        await renderMateriasPrimasPage(contentElement);
+    switch (path) {
+        case '#/materias-primas':
+            await renderMateriasPrimasPage(contentElement);
+            break;
+        case '#/produtos':
+            await renderProdutosPage(contentElement);
+            break;
+        // Adicionaremos os casos para as outras páginas aqui
+        default:
+            contentElement.innerHTML = `<h1>Página "${path}" em Construção</h1>`;
+            break;
     }
 }
 
-// --- A CORREÇÃO PRINCIPAL ESTÁ AQUI ---
-// Espera que todo o HTML da página seja carregado antes de executar o nosso código.
-document.addEventListener('DOMContentLoaded', () => {
-    // Ouve por mudanças no URL (ex: clique num link)
-    window.addEventListener('hashchange', router);
-    
-    // Executa o router pela primeira vez
-    router();
-});
+// --- PONTO DE ENTRADA DA APLICAÇÃO ---
+// Garante que o router só é chamado depois da página estar pronta.
+document.addEventListener('DOMContentLoaded', router);
+// Ouve por mudanças no URL (ex: clique num link) para navegar entre as páginas
+window.addEventListener('hashchange', router);

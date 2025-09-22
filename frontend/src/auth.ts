@@ -16,7 +16,7 @@ export function removeToken() {
 }
 
 // Tenta fazer o login na API e devolve o token se for bem-sucedido
-export async function login(username, password) {
+export async function login(username: string, password: string) {
     const response = await fetch(`${API_BASE_URL}/token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

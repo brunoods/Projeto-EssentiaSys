@@ -28,12 +28,10 @@ export async function apiFetch(endpoint: string) {
 }
 
 // Funções específicas para cada endpoint
-export function getMateriasPrimas() {
-    return apiFetch('materias-primas');
-}
-
-export function getProdutos() {
-    return apiFetch('produtos');
-}
-
-// Adicionaremos mais funções aqui (getClientes, getVendas, etc.)
+export function getMateriasPrimas() { return apiFetch('materias-primas'); }
+export function getProdutos() { return apiFetch('produtos'); }
+export function getFornecedores() { return apiFetch('fornecedores'); }
+export function getClientes() { return apiFetch('clientes'); }
+export function getCompras() { return apiFetch('compras'); }
+export function getVendas() { return apiFetch('vendas'); }
+export function getDespesas() { return apiFetch('despesas'); }
