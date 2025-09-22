@@ -1,6 +1,11 @@
 import { apiFetch } from '../api';
 
-interface Cliente { id: number; nome: string; contacto: string; email: string; }
+interface Cliente { 
+    id: number; 
+    nome: string; 
+    contacto: string; 
+    email: string; 
+}
 
 export async function renderClientesPage(element: HTMLElement) {
     try {

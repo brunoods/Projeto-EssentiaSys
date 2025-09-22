@@ -2,7 +2,12 @@ import './style.css';
 import { getToken, login, logout } from './auth';
 import { renderMateriasPrimasPage } from './pages/materiasPrimas';
 import { renderProdutosPage } from './pages/produtos';
-// Futuramente, importaremos as outras páginas aqui
+import { renderFornecedoresPage } from './pages/fornecedores';
+import { renderClientesPage } from './pages/clientes';
+import { renderComprasPage } from './pages/compras'; // <-- NOVA LINHA
+import { renderVendasPage } from './pages/vendas'; // <-- NOVA LINHA
+import { renderDespesasPage } from './pages/despesas'; // <-- NOVA LINHA
+
 
 const rootElement = document.getElementById('root');
 
@@ -82,7 +87,21 @@ async function router() {
         case '#/produtos':
             await renderProdutosPage(contentElement);
             break;
-        // Adicionaremos os casos para as outras páginas aqui
+        case '#/fornecedores':
+            await renderFornecedoresPage(contentElement);
+            break;
+        case '#/clientes':
+            await renderClientesPage(contentElement);
+            break;
+        case '#/compras': // <-- NOVO CASO
+            await renderComprasPage(contentElement);
+            break;
+        case '#/vendas': // <-- NOVO CASO
+            await renderVendasPage(contentElement);
+            break;
+        case '#/despesas': // <-- NOVO CASO
+            await renderDespesasPage(contentElement);
+            break;
         default:
             contentElement.innerHTML = `<h1>Página "${path}" em Construção</h1>`;
             break;

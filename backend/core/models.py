@@ -9,7 +9,7 @@ class MateriaPrima(models.Model):
     # A nova linha de código que liga a matéria-prima a um utilizador
     # O on_delete=models.CASCADE garante que a matéria-prima é apagada se o utilizador for apagado.
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
+
     nome = models.CharField(max_length=200)
     unidade_medida = models.CharField(max_length=50)
     # A lógica de stock e custo será gerenciada pelo backend, como no seu gerenciador.py
@@ -28,7 +28,7 @@ class MateriaPrima(models.Model):
 class ProdutoAcabado(models.Model):
     # Ligação ao utilizador, seguindo a mesma lógica
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
+
     nome = models.CharField(max_length=200)
     categoria = models.CharField(max_length=100, default="Sem Categoria", blank=True)
     preco_venda = models.DecimalField(max_digits=10, decimal_places=2)
@@ -71,10 +71,60 @@ class Fornecedor(models.Model):
     cnpj = models.CharField("CNPJ/CPF", max_length=20, blank=True)
     endereco = models.TextField(blank=True)
     notas = models.TextField(blank=True)
-    
+
     class Meta:
         unique_together = ('usuario', 'nome')
         verbose_name_plural = "Fornecedores"
 
     def __str__(self):
         return f"{self.nome} ({self.usuario.username})"
+
+class Cliente(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=200)
+    contacto = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(max_length=254, blank=True)
+    cpf = models.CharField("CPF", max_length=20, blank=True)
+    endereco = models.TextField(blank=True)
+    notas = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('usuario', 'nome')
+
+    def __str__(self):
+        return f"{self.nome} ({self.usuario.username})"
+
+class Compra(models.Model):
+    materia_prima = models.ForeignKey(MateriaPrima, on_delete=models.CASCADE, related_name='compras')
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.SET_NULL, null=True, blank=True)
+    data_compra = models.DateField(default=timezone.now)
+    quantidade = models.DecimalField(max_digits=10, decimal_places=3)
+    custo_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Compra de {self.materia_prima.nome} em {self.data_compra}"
+
+class Venda(models.Model):
+    STATUS_PAGAMENTO = [('Paga', 'Paga'), ('Pendente', 'Pendente'), ('Cancelada', 'Cancelada')]
+    produto = models.ForeignKey(ProdutoAcabado, on_delete=models.PROTECT, related_name='vendas')
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
+    data_venda = models.DateTimeField(default=timezone.now)
+    quantidade = models.PositiveIntegerField()
+    preco_venda_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    custo_producao_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    forma_pagamento = models.CharField(max_length=50, default='N/D')
+    status_pagamento = models.CharField(max_length=10, choices=STATUS_PAGAMENTO, default='Paga')
+
+    def __str__(self):
+        return f"Venda de {self.quantidade}x {self.produto.nome}"
+
+class Despesa(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    data = models.DateField(default=timezone.now)
+    descricao = models.CharField(max_length=255)
+    categoria = models.CharField(max_length=100)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.descricao} - {self.valor}"
